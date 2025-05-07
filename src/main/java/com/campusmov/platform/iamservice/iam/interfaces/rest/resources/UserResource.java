@@ -4,9 +4,9 @@ import com.campusmov.platform.iamservice.iam.domain.model.entities.Role;
 
 import java.util.List;
 
-public record UserResource(Long id, String email, List<Role> roles) {
+public record UserResource(String id, String email, List<Role> roles) {
     public UserResource {
-        if (id == null) {
+        if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("id is required");
         }
         if (email == null || email.isBlank()) {

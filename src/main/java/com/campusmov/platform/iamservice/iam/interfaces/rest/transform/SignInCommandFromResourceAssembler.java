@@ -5,6 +5,6 @@ import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.SignInRes
 
 public class SignInCommandFromResourceAssembler {
     public static SignInCommand toCommandFromResource(SignInResource resource) {
-        return new SignInCommand(resource.email(), resource.password());
+        return new SignInCommand(resource.email());
     }
 }

@@ -25,20 +25,20 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Optional<User> handle(CreateUserCommand command) {
         if (userRepository.existsByEmail(command.email())) throw new RuntimeException("User " + command.email() + " already exists");
 
-        var roles = command.roleId().stream()
-                .map(roleId -> roleRepository.findById(roleId)
-                        .orElseThrow(() -> new RuntimeException("Role with ID " + roleId + " not found")))
+        var roles = command.roleName().stream()
+                .map(roleName -> roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
                 .toList();
 
-        var user = new User(command.email(), command.password(), roles);
+        var user = new User(command.email(), roles);
         userRepository.save(user);
         return Optional.of(user);
+
     }
 
     @Override
     public Optional<User> handle(SignInCommand command) {
-        return userRepository.findByEmail(command.email())
-                .filter(user -> user.getPassword().equals(command.password()));
+        return userRepository.findByEmail(command.email());
     }
 
 }
