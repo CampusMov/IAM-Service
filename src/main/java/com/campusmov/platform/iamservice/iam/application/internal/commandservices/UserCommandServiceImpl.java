@@ -3,6 +3,7 @@ package com.campusmov.platform.iamservice.iam.application.internal.commandservic
 
 import com.campusmov.platform.iamservice.iam.domain.model.aggregates.User;
 import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCommand;
+import com.campusmov.platform.iamservice.iam.domain.model.commands.SignInCommand;
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
@@ -33,4 +34,11 @@ public class UserCommandServiceImpl implements UserCommandService {
         userRepository.save(user);
         return Optional.of(user);
     }
+
+    @Override
+    public Optional<User> handle(SignInCommand command) {
+        return userRepository.findByEmail(command.email())
+                .filter(user -> user.getPassword().equals(command.password()));
+    }
+
 }

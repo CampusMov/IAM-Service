@@ -22,6 +22,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Getter
     @NotBlank
     private String password;
 
