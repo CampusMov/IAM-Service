@@ -3,8 +3,10 @@ package com.campusmov.platform.iamservice.iam.interfaces.rest;
 import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCommand;
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.CreateUserResource;
+import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.SignInResource;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.UserResource;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.CreateUserCommandFromResourceAssembler;
+import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.SignInCommandFromResourceAssembler;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +29,7 @@ public class RegistrationController {
         this.userCommandService = userCommandService;
     }
 
-    @PostMapping("/create-account")
+    @PostMapping("/sign-up")
     @Operation(summary = "Create a new account", description = "Create a new account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created successfully"),
@@ -40,4 +42,19 @@ public class RegistrationController {
         var resource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
         return ResponseEntity.ok(resource);
     }
+
+    @PostMapping("/sign-in")
+    @Operation(summary = "register with your account", description = "register with your account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User signed in"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<UserResource> signIn(@RequestBody SignInResource signInResource) {
+        var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
+        var user = userCommandService.handle(signInCommand);
+        if (user.isEmpty()) return ResponseEntity.notFound().build();
+        var resource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
+        return ResponseEntity.ok(resource);
+    }
+    
 }
