@@ -7,9 +7,12 @@ import com.campusmov.platform.iamservice.iam.domain.model.commands.SignInCommand
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
@@ -31,6 +34,12 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .toList();
 
         var user = new User(command.email(), roles);
+
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        user.setVerificationCode(String.valueOf(code));
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+
         userRepository.save(user);
         return Optional.of(user);
 
@@ -38,7 +47,16 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<User> handle(SignInCommand command) {
-        return userRepository.findByEmail(command.email());
+        var user = userRepository.findByEmail(command.email());
+        if (user.isEmpty()) throw new RuntimeException("User " + command.email() + " not found");
+
+        return user;
     }
+
+    @Scheduled(fixedRate = 60000)
+    public void deleteExpiredAccounts() {
+            userRepository.deleteAllByVerifyAccountExpiresAt(LocalDateTime.now());
+    }
+
 
 }
