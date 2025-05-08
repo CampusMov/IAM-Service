@@ -5,6 +5,6 @@ import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.UserResou
 
 public class UserResourceFromEntityAssembler {
     public static UserResource toResourceFromEntity(User user) {
-        return new UserResource(user.getId(), user.getEmail(), user.getRoles());
+        return new UserResource(user.getId(), user.getEmail(), user.getStatus().statusName(), user.getRoles());
     }
 }

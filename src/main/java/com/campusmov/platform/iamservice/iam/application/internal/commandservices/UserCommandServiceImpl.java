@@ -3,7 +3,6 @@ package com.campusmov.platform.iamservice.iam.application.internal.commandservic
 
 import com.campusmov.platform.iamservice.iam.domain.model.aggregates.User;
 import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCommand;
-import com.campusmov.platform.iamservice.iam.domain.model.commands.SignInCommand;
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
@@ -26,8 +25,9 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<User> handle(CreateUserCommand command) {
-        if (userRepository.existsByEmail(command.email())) throw new RuntimeException("User " + command.email() + " already exists");
-
+        if (userRepository.existsByEmail(command.email())) {
+            return userRepository.findByEmail(command.email());
+        }
         var roles = command.roleName().stream()
                 .map(roleName -> roleRepository.findByName(roleName)
                         .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
@@ -39,18 +39,10 @@ public class UserCommandServiceImpl implements UserCommandService {
         int code = random.nextInt(900000) + 100000;
         user.setVerificationCode(String.valueOf(code));
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+        user.setVerifyAccountExpiresAt(LocalDateTime.now().plusMinutes(15));
 
         userRepository.save(user);
         return Optional.of(user);
-
-    }
-
-    @Override
-    public Optional<User> handle(SignInCommand command) {
-        var user = userRepository.findByEmail(command.email());
-        if (user.isEmpty()) throw new RuntimeException("User " + command.email() + " not found");
-
-        return user;
     }
 
     @Scheduled(fixedRate = 60000)
