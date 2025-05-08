@@ -29,6 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
             if (user.getVerificationCode().equals(vUser.getVerificationCode())) {
                 if (user.getStatus() == UserStatus.CREATED) {user.setStatus(UserStatus.ACTIVE);}
+                user.setVerifyAccountExpiresAt(null);
                 user.setVerificationCode(null);
                 user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
