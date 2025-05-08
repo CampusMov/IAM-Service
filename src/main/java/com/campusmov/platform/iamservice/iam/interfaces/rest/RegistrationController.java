@@ -1,9 +1,13 @@
 package com.campusmov.platform.iamservice.iam.interfaces.rest;
 
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
+import com.campusmov.platform.iamservice.iam.infrastructure.services.EmailService;
+import com.campusmov.platform.iamservice.iam.infrastructure.model.Email;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.CreateUserResource;
+import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.SignInResource;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.UserResource;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.CreateUserCommandFromResourceAssembler;
+import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.SignInCommandFromResourceAssembler;
 import com.campusmov.platform.iamservice.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,15 +19,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/v1/registration")
 @Tag(name = "Registration", description = "Registration Management Endpoints")
 public class RegistrationController {
     private final UserCommandService userCommandService;
+    private final EmailService emailService;
 
 
-    public RegistrationController(UserCommandService userCommandService) {
+    public RegistrationController(UserCommandService userCommandService, EmailService emailService) {
         this.userCommandService = userCommandService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/sign-up")
@@ -36,8 +44,29 @@ public class RegistrationController {
     public ResponseEntity<UserResource> createAccount(@RequestBody CreateUserResource createUserResource) {
         var command = CreateUserCommandFromResourceAssembler.toCommandFromResource(createUserResource);
         var user = userCommandService.handle(command);
+        user.get().setVerifyAccountExpiresAt(LocalDateTime.now().plusMinutes(15));
         var resource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
+        var email = new Email(user.get().getEmail(), "Verification code", user.get().getVerificationCode());
+        emailService.sendEmail(email);
         return ResponseEntity.ok(resource);
     }
+
+    @PostMapping("/sign-in")
+    @Operation(summary = "sign in with your account", description = "sign in with your account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "user found"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<UserResource> signIn(@RequestBody SignInResource signInResource) {
+        var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
+        var user = userCommandService.handle(signInCommand);
+        if (user.isEmpty()) return ResponseEntity.notFound().build();
+        var resource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
+        var email = new Email(user.get().getEmail(), "Verification code", user.get().getVerificationCode());
+        emailService.sendEmail(email);
+        return ResponseEntity.ok(resource);
+    }
+
+
 
 }
