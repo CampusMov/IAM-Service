@@ -1,5 +1,6 @@
 package com.campusmov.platform.iamservice.iam.domain.model.aggregates;
 
+import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCommand;
 import com.campusmov.platform.iamservice.iam.domain.model.entities.Role;
 import com.campusmov.platform.iamservice.iam.domain.model.valueobjects.UserStatus;
 import com.campusmov.platform.iamservice.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -41,11 +43,16 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     public User() {
     }
 
-    public User(String email, List<Role> roles) {
-        this.email = email;
+    public User(CreateUserCommand command) {
+        this.email = command.email();
         this.status = UserStatus.CREATED;
-        this.roles = roles;
+        this.roles = new ArrayList<>();
     }
 
+    public List<String> getRoleNames() {
+        return roles.stream()
+                .map(Role::getRoleName)
+                .toList();
+    }
 
 }

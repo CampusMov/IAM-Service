@@ -11,7 +11,12 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-public class Role extends AuditableAbstractAggregateRoot<Role> {
+public class Role{
+
+    @Id
+    @Setter
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Getter
     @Setter
@@ -21,4 +26,8 @@ public class Role extends AuditableAbstractAggregateRoot<Role> {
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
+
+    public String getRoleName () {
+        return name;
+    }
 }
