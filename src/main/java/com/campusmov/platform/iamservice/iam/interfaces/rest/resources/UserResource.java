@@ -1,12 +1,11 @@
 package com.campusmov.platform.iamservice.iam.interfaces.rest.resources;
 
-import com.campusmov.platform.iamservice.iam.domain.model.entities.Role;
 
 import java.util.List;
 
-public record UserResource(Long id, String email, List<Role> roles) {
+public record UserResource(String id, String email, String status, List<String> roles) {
     public UserResource {
-        if (id == null) {
+        if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("id is required");
         }
         if (email == null || email.isBlank()) {
@@ -14,6 +13,9 @@ public record UserResource(Long id, String email, List<Role> roles) {
         }
         if (roles == null || roles.isEmpty()) {
             throw new IllegalArgumentException("roles is required");
+        }
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("status is required");
         }
     }
 }

@@ -6,4 +6,10 @@ public enum UserStatus {
     BLOCKED,
     DELETED;
 
+    public String statusName() {
+        return this.name();
+    }
+
+
+
 }

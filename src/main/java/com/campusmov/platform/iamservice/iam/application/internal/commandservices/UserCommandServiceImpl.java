@@ -6,9 +6,12 @@ import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCom
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
@@ -22,15 +25,30 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<User> handle(CreateUserCommand command) {
-        if (userRepository.existsByEmail(command.email())) throw new RuntimeException("User " + command.email() + " already exists");
+        if (userRepository.existsByEmail(command.email())) {
+            return userRepository.findByEmail(command.email());
+        }
+//        var roles = command.roleName().stream()
+//                .map(roleName -> roleRepository.findByName(roleName)
+//                        .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
+//                .toList();
 
-        var roles = command.roleId().stream()
-                .map(roleId -> roleRepository.findById(roleId)
-                        .orElseThrow(() -> new RuntimeException("Role with ID " + roleId + " not found")))
-                .toList();
+        var user = new User(command);
 
-        var user = new User(command.email(), command.password(), roles);
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        user.setVerificationCode(String.valueOf(code));
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+        user.setVerifyAccountExpiresAt(LocalDateTime.now().plusMinutes(15));
+
         userRepository.save(user);
         return Optional.of(user);
     }
+
+    @Scheduled(fixedRate = 60000)
+    public void deleteExpiredAccounts() {
+            userRepository.deleteAllByVerifyAccountExpiresAt(LocalDateTime.now());
+    }
+
+
 }
