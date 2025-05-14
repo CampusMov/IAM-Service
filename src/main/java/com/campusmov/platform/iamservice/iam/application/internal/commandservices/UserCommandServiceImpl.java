@@ -28,12 +28,12 @@ public class UserCommandServiceImpl implements UserCommandService {
         if (userRepository.existsByEmail(command.email())) {
             return userRepository.findByEmail(command.email());
         }
-        var roles = command.roleName().stream()
-                .map(roleName -> roleRepository.findByName(roleName)
-                        .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
-                .toList();
+//        var roles = command.roleName().stream()
+//                .map(roleName -> roleRepository.findByName(roleName)
+//                        .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
+//                .toList();
 
-        var user = new User(command.email(), roles);
+        var user = new User(command);
 
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
