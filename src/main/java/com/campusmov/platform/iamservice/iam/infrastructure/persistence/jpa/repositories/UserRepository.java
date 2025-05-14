@@ -12,5 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     Optional<User> findByEmail(String email);
 
-    void deleteAllByVerifyAccountExpiresAt(LocalDateTime verifyAccountExpiresAt);
+    void deleteAllByVerifyAccountExpiresAtBefore(LocalDateTime verifyAccountExpiresAt);
 }

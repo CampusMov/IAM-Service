@@ -47,8 +47,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Scheduled(fixedRate = 60000)
     public void deleteExpiredAccounts() {
-            userRepository.deleteAllByVerifyAccountExpiresAt(LocalDateTime.now());
+        userRepository.deleteAllByVerifyAccountExpiresAtBefore(LocalDateTime.now());
     }
-
-
 }
