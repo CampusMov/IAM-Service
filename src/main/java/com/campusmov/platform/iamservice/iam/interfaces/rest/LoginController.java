@@ -12,14 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/login")
-@Tag(name = "Login", description = "Login Management Endpoints")
+@Tag(name = "login", description = "Login Management Endpoints")
 public class LoginController {
     private final EmailService emailService;
     private final UserCommandService userCommandService;
@@ -33,12 +30,13 @@ public class LoginController {
     }
 
     @PostMapping("/verify-account")
-    @Operation(summary = "verify your account", description = "verify your account")
+    @Operation(summary = "verify your account", description = "verify your account", operationId = "verify-account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully verified"),
             @ApiResponse(responseCode = "404", description = "Incorrect verification code"),
     })
-    public ResponseEntity<UserResource> verifyUser(@RequestBody VerifyUserResource verifyUserResource) {
+    public ResponseEntity<UserResource> verifyUser(@RequestParam String email, @RequestParam String verificationCode, @RequestParam String role) {
+        var verifyUserResource = new VerifyUserResource(email, verificationCode, role);
         var validateCode = new VerifyUser(verifyUserResource);
         var verifiedUser = authenticationService.verifyUser(validateCode);
         return ResponseEntity.ok(UserResourceFromEntityAssembler.toResourceFromEntity(verifiedUser.get()));
