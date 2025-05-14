@@ -14,8 +14,8 @@ public class OpenApiConfiguration {
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()
-                        .title("UniRide Matching Routing Service API")
-                        .description("UniRide Matching Routing Service application REST API documentation.")
+                        .title("UniRide Identity and Access Management Service API")
+                        .description("UniRide IAM Service application REST API documentation.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
