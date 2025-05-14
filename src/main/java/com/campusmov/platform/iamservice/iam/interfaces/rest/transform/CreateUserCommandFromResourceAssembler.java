@@ -5,6 +5,6 @@ import com.campusmov.platform.iamservice.iam.interfaces.rest.resources.CreateUse
 
 public class CreateUserCommandFromResourceAssembler {
     public static CreateUserCommand toCommandFromResource(CreateUserResource resource) {
-        return new CreateUserCommand(resource.email(), resource.roleName());
+        return new CreateUserCommand(resource.email());
     }
 }
