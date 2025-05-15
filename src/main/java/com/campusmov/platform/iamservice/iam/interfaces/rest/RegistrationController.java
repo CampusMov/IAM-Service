@@ -30,8 +30,7 @@ public class RegistrationController {
     @Operation(summary = "register account", description = "Register account", operationId = "sign-up")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "User not found")
+            @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     public ResponseEntity<Void>  createAccount(@RequestParam String email) {
         var createUserResource = new CreateUserResource(email);

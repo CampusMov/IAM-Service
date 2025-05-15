@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application-dev.properties")
+@PropertySource("classpath:application.properties")
 public class EmailConfig {
 
     @Value("${email.username}")
