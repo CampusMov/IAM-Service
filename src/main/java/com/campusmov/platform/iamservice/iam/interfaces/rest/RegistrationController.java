@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth/institutional-email-verification")
-@Tag(name = "registration", description = "Registration Management Endpoints")
+@Tag(name = "Authentication", description = "Authentication Management Endpoints")
 public class RegistrationController {
     private final UserCommandService userCommandService;
     private final EmailService emailService;

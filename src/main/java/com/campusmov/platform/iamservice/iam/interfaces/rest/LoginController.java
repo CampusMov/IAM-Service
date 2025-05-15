@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth/code-verification")
-@Tag(name = "login", description = "Login Management Endpoints")
+@Tag(name = "Authentication", description = "Authentication Management Endpoints")
 public class LoginController {
     private final EmailService emailService;
     private final UserCommandService userCommandService;
