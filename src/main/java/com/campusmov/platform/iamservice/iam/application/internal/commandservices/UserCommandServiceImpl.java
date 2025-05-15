@@ -6,6 +6,7 @@ import com.campusmov.platform.iamservice.iam.domain.model.commands.CreateUserCom
 import com.campusmov.platform.iamservice.iam.domain.services.UserCommandService;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +47,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Scheduled(fixedRate = 60000)
+    @Transactional
     public void deleteExpiredAccounts() {
-            userRepository.deleteAllByVerifyAccountExpiresAt(LocalDateTime.now());
+        userRepository.deleteAllByVerifyAccountExpiresAtBefore(LocalDateTime.now());
     }
-
-
 }
