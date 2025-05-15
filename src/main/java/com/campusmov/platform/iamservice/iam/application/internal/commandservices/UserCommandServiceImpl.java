@@ -26,18 +26,22 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<User> handle(CreateUserCommand command) {
-        if (userRepository.existsByEmail(command.email())) {
-            return userRepository.findByEmail(command.email());
-        }
-//        var roles = command.roleName().stream()
-//                .map(roleName -> roleRepository.findByName(roleName)
-//                        .orElseThrow(() -> new RuntimeException("Role with name " + roleName + " not found")))
-//                .toList();
-
-        var user = new User(command);
-
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
+
+        if (userRepository.existsByEmail(command.email())) {
+            var existingUser = userRepository.findByEmail(command.email());
+            if (existingUser.isPresent()) {
+                var user = existingUser.get();
+                user.setVerificationCode(String.valueOf(code));
+                user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
+                userRepository.save(user);
+                return Optional.of(user);
+            }
+            return Optional.empty();
+        }
+
+        var user = new User(command);
         user.setVerificationCode(String.valueOf(code));
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
         user.setVerifyAccountExpiresAt(LocalDateTime.now().plusMinutes(15));
