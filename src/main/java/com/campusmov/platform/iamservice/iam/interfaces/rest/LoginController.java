@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/login")
+@RequestMapping("/auth/code-verification")
 @Tag(name = "login", description = "Login Management Endpoints")
 public class LoginController {
     private final EmailService emailService;
@@ -29,7 +29,7 @@ public class LoginController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/verify-account")
+    @PostMapping()
     @Operation(summary = "verify your account", description = "verify your account", operationId = "verify-account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully verified"),

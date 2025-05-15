@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/v1/registration")
+@RequestMapping("/auth/institutional-email-verification")
 @Tag(name = "registration", description = "Registration Management Endpoints")
 public class RegistrationController {
     private final UserCommandService userCommandService;
@@ -26,7 +26,7 @@ public class RegistrationController {
         this.emailService = emailService;
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("")
     @Operation(summary = "register account", description = "Register account", operationId = "sign-up")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created successfully"),
