@@ -52,7 +52,7 @@ jobs:
         working-directory: k8s/manifests/applications
         run: |
           NEW_VERSION="${{ needs.build-and-push.outputs.version }}"
-          sed -i "s|\(image: jhosepmyr/iam-service:\).*|\1${NEW_VERSION}|" iam-service.yaml
+          sed -i "s|\(image: jhosepmyr/uni-ride_iam-service:\).*|\1${NEW_VERSION}|" iam-service.yaml
           git diff iam-service.yaml
 
       - name: Commit and push changes
