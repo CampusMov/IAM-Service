@@ -1,7 +1,8 @@
 package com.campusmov.platform.iamservice.iam.domain.model.valueobjects;
 
 public enum UserStatus {
-    CREATED,
+    NOT_VERIFIED,
+    VERIFIED,
     ACTIVE,
     BLOCKED,
     DELETED;
@@ -9,7 +10,4 @@ public enum UserStatus {
     public String statusName() {
         return this.name();
     }
-
-
-
 }
