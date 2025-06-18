@@ -6,22 +6,18 @@ import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repo
 import com.campusmov.platform.iamservice.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.campusmov.platform.iamservice.iam.infrastructure.services.AuthenticationService;
 import com.campusmov.platform.iamservice.iam.infrastructure.model.VerifyUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    public AuthenticationServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-    }
-
 
     @Override
     public Optional<User> verifyUser(VerifyUser vUser) {
@@ -32,7 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new RuntimeException("Verification code has expired");
             }
             if (user.getVerificationCode().equals(vUser.getVerificationCode())) {
-                if (user.getStatus() == UserStatus.CREATED) {user.setStatus(UserStatus.ACTIVE);}
+                if (user.getStatus() == UserStatus.NOT_VERIFIED) {user.setStatus(UserStatus.VERIFIED);}
 
                 var role = roleRepository.findByName(vUser.getRoleName())
                         .orElseThrow(() -> new RuntimeException("Role with name " + vUser.getRoleName() + " not found"));
