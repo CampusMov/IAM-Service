@@ -45,7 +45,7 @@ public class User extends AuditableAbstractAggregateRoot<User> {
 
     public User(CreateUserCommand command) {
         this.email = command.email();
-        this.status = UserStatus.CREATED;
+        this.status = UserStatus.NOT_VERIFIED;
         this.roles = new ArrayList<>();
     }
 
@@ -53,6 +53,13 @@ public class User extends AuditableAbstractAggregateRoot<User> {
         return roles.stream()
                 .map(Role::getRoleName)
                 .toList();
+    }
+
+    public void activate() {
+        this.status = UserStatus.ACTIVE;
+        this.verificationCode = null;
+        this.verificationCodeExpiresAt = null;
+        this.verifyAccountExpiresAt = null;
     }
 
 }
