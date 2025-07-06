@@ -47,13 +47,13 @@ public class RegistrationController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("id")
+    @GetMapping("{id}")
     @Operation(summary = "get user", description = "Get user by id", operationId = "get-user-by-id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<UserResource> getUserById(@RequestParam String id) {
+    public ResponseEntity<UserResource> getUserById(@PathVariable String id) {
         var query = new GetUserByIdQuery(id);
         var user = userQueryService.handle(query);
         var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
