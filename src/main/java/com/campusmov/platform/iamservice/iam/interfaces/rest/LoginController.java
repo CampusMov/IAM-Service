@@ -18,14 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth/code-verification")
 @Tag(name = "Authentication", description = "Authentication Management Endpoints")
 public class LoginController {
-    private final EmailService emailService;
-    private final UserCommandService userCommandService;
     private final AuthenticationService authenticationService;
 
 
-    public LoginController(EmailService emailService, UserCommandService userCommandService, AuthenticationService authenticationService) {
-        this.emailService = emailService;
-        this.userCommandService = userCommandService;
+    public LoginController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 
