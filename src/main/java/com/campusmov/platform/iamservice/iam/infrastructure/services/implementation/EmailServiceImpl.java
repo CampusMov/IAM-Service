@@ -5,6 +5,7 @@ import com.campusmov.platform.iamservice.iam.infrastructure.model.Email;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -21,6 +22,8 @@ public class EmailServiceImpl implements EmailService {
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
     }
+
+    @Async
     @Override
     public void sendEmail(Email email) {
         try {
